@@ -2,8 +2,6 @@ body {
   margin: 0;
   background-color: rgb(34, 21, 51);
 
-  /* width: 100wh; */
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
