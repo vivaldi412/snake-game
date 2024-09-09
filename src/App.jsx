@@ -1,5 +1,9 @@
 import React from "react";
 import { nanoid } from "nanoid";
+import foodPlacer from './components/foodPlacer.jsx'
+import snakeHead from './components/snakeHead.jsx'
+import snakePaint from './components/snakePaint.jsx'
+import snakeStep from './components/snakeStep.jsx'
 
 
 export default function App() {
@@ -33,9 +37,8 @@ export default function App() {
     }
   }
   const [board, setBoard] = React.useState(tempBoardObNO2)
-  const [refresh, setRefresh] = React.useState(0)
+  const [isPlayed, setIsPlayed] = React.useState(false)
   const requestRef = React.useRef(null)
-  const framerateRef = React.useRef(null)
   const keyRef = React.useRef(null)
   const keyChangeRef = React.useRef(null)
   const snakeCountRef = React.useRef(0)
@@ -91,7 +94,7 @@ export default function App() {
     if (((lgo + 1) / 2) % 10 === 0) {
       lgo = lgo + 20
     }
-    let ugo = boardRef.current[nowIndex].snake.indexNextU()   //lgo === 0 ||
+    let ugo = boardRef.current[nowIndex].snake.indexNextU()
     if (ugo < 0) {
       ugo = ugo + 400
     }
@@ -101,7 +104,7 @@ export default function App() {
     }
 
 
-    // console.log('first', nowIndex, 'snakelength', snakeCountRef.current)
+
     if (aim === "right") { Aim = rgo }
     else if (aim === "left") { Aim = lgo }
     else if (aim === "up") { Aim = ugo }
@@ -110,7 +113,7 @@ export default function App() {
 
 
 
-    // console.log(Aim)`
+
     boardRef.current = boardRef.current.map(board => {
       if (board.index === Aim) {
         now = board.index
@@ -131,10 +134,8 @@ export default function App() {
   }
   //################################################################
   function snakePaintRef() {
-    let now;
     boardRef.current = boardRef.current.map(board => {
       if (board.snake?.index !== null) {
-        now = board.index
         return (board = {
           ...board,
           value: <div className="board" id="snake" key={nanoid()}></div>
@@ -166,7 +167,6 @@ export default function App() {
       }
       else { return board }
     })
-    return now;
   }
   //################################################################
   function placeFood() {
@@ -218,16 +218,30 @@ export default function App() {
     }
     requestRef.current = window.requestAnimationFrame(snakeMove)
   }
-  function start() { requestRef.current = window.requestAnimationFrame(snakeMove) }
+  function reStart() {
+    setIsPlayed(true)
+    snakeHead2(0)
+    if (!foodRef.current) { placeFood() }
+    requestRef.current = window.requestAnimationFrame(snakeMove)
+    console.log('done')
+  }
   function stop() { window.cancelAnimationFrame(requestRef.current) }
+  function toContinue() { window.cancelAnimationFrame(requestRef.current) }
 
 
   //9999999999999999999999999999999999999999999999999999999999999999first index
 
+  function playHandle() {
+    setIsPlayed(true)
+    snakeHead2(0)
+    if (!foodRef.current) { placeFood() }
+    requestRef.current = window.requestAnimationFrame(snakeMove)
+    console.log('start')
+  }
 
-
-
-
+  const startBox = (<div className="start-screen">
+    <h2 onClick={playHandle}>Start</h2>
+  </div>)
 
 
 
@@ -254,7 +268,6 @@ export default function App() {
 
 
   function setHandle() { //push
-    let temp;
     snakeHead2(0)
     if (!foodRef.current) { placeFood() }
     requestRef.current = window.requestAnimationFrame(snakeMove)
@@ -262,8 +275,7 @@ export default function App() {
   }
 
   function testLength() {
-    snakeMoveSpeed()
-    setBoard(boardRef.current)
+
 
 
   }
@@ -310,17 +322,21 @@ export default function App() {
 
   return (
     <main>
-      <button onClick={setHandle}>push</button>
 
-      <button onClick={start}>Start</button>
+      <button onClick={reStart}>restart</button>
 
-      <button onClick={stop}>Stop</button>
       <button>{howmanyRef.current + 1}</button>
-
+      <div className="score-box">
+        <div className="score"><p>Score: {howmanyRef.current + 1}</p></div>
+        <div className="high-score"><p>High Score: {howmanyRef.current + 1}</p></div>
+      </div>
       <div className="game-box">
+        {!isPlayed && startBox}
         {board.map(board => board.value)}
 
       </div>
+      <button onClick={stop}>Stop</button>
+      <button onClick={toContinue}>Continue</button>
     </main>
   )
 }
