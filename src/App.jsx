@@ -323,20 +323,18 @@ export default function App() {
   return (
     <main>
 
-      <button onClick={reStart}>restart</button>
-
-      <button>{howmanyRef.current + 1}</button>
       <div className="score-box">
         <div className="score"><p>Score: {howmanyRef.current + 1}</p></div>
         <div className="high-score"><p>High Score: {howmanyRef.current + 1}</p></div>
       </div>
       <div className="game-box">
-        {!isPlayed && startBox}
         {board.map(board => board.value)}
-
       </div>
-      <button onClick={stop}>Stop</button>
-      <button onClick={toContinue}>Continue</button>
+      <div className="btn-box">
+        <button className="btn" onClick={stop}>Stop</button>
+        <button className="btn" onClick={toContinue}>Continue</button>
+        <button className="btn" onClick={reStart}>restart</button>
+      </div>
     </main>
   )
 }
