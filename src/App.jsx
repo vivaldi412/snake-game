@@ -38,6 +38,7 @@ export default function App() {
   }
   const [board, setBoard] = React.useState(tempBoardObNO2)
   const [isPlayed, setIsPlayed] = React.useState(false)
+  const [speed, setSpeed] = React.useState(50)
   const requestRef = React.useRef(null)
   const keyRef = React.useRef(null)
   const keyChangeRef = React.useRef(null)
@@ -192,6 +193,7 @@ export default function App() {
   let speedCounter = 0;
   let speedStart = 0;
   let speedTimeStart = performance.now()
+
   //################################################################
   function snakeMove() {
     let tempNow;
@@ -200,7 +202,7 @@ export default function App() {
     speedCounter++;
     timego = performance.now()
 
-    if (timego - speedTimeStart > 50 || speedStart < 3) {
+    if (timego - speedTimeStart > speed || speedStart < 3) {
       tempNow = snakeStep2(keyChangeRef.current)
       snakePaintRef()
 
@@ -219,19 +221,23 @@ export default function App() {
     requestRef.current = window.requestAnimationFrame(snakeMove)
   }
   function reStart() {
-    setIsPlayed(true)
-    snakeHead2(0)
-    if (!foodRef.current) { placeFood() }
-    requestRef.current = window.requestAnimationFrame(snakeMove)
-    console.log('done')
+    if (isPlayed) {
+      stop()
+      requestRef.current = null;
+      // setIsPlayed(true)
+      snakeHead2(0)
+      if (!foodRef.current) { placeFood() }
+      requestRef.current = window.requestAnimationFrame(snakeMove)
+      console.log('done')
+    }
   }
   function stop() { window.cancelAnimationFrame(requestRef.current) }
-  function toContinue() { window.cancelAnimationFrame(requestRef.current) }
+  function toContinue() { requestRef.current = window.requestAnimationFrame(snakeMove) }
 
 
   //9999999999999999999999999999999999999999999999999999999999999999first index
 
-  function playHandle() {
+  function clickToPlay() {
     setIsPlayed(true)
     snakeHead2(0)
     if (!foodRef.current) { placeFood() }
@@ -239,11 +245,17 @@ export default function App() {
     console.log('start')
   }
 
-  const startBox = (<div className="start-screen">
-    <h2 onClick={playHandle}>Start</h2>
-  </div>)
 
 
+
+  function speedHandle(event) {
+    event.preventDefault();
+    setSpeed((
+      event.target.value
+    ))
+    stop()
+    toContinue()
+  }
 
 
 
@@ -323,18 +335,42 @@ export default function App() {
   return (
     <main>
 
+      <div className="wrapper">
+        <div className="input-box">
+          <input type="range" id="speed" name="speed"
+            min={5} max={160} value={speed}
+            step={1} onChange={speedHandle} />
+        </div>
+        <div id="speed-value">
+          Speed: {speed - 155 > 0 ? Math.ceil(((speed - 155) * 100) / 155) : Math.ceil((((speed - 155) * -1) * 100) / 155)}%
+        </div>
+      </div>
       <div className="score-box">
         <div className="score"><p>Score: {howmanyRef.current + 1}</p></div>
         <div className="high-score"><p>High Score: {howmanyRef.current + 1}</p></div>
       </div>
       <div className="game-box">
-        {board.map(board => board.value)}
+        {
+          isPlayed ?
+            board.map(board => board.value)
+            : board.map(board => board = <div
+              style={{ backgroundColor: "#84a59dc9" }}
+              className="board"
+              key={nanoid()}>
+            </div>)
+        }
+        <div className="start-screen" style={isPlayed ? { display: "none" } : { display: "flex" }}>
+          <h2 onClick={clickToPlay}>Click to <span>PLAY</span></h2>
+        </div>
       </div>
       <div className="btn-box">
-        <button className="btn" onClick={stop}>Stop</button>
-        <button className="btn" onClick={toContinue}>Continue</button>
+        {/* <button className="btn" onClick={stop}>Stop</button>
+        <button className="btn" onClick={toContinue}>Continue</button> */}
         <button className="btn" onClick={reStart}>restart</button>
       </div>
+
+
+
     </main>
   )
 }
