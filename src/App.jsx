@@ -39,6 +39,7 @@ export default function App() {
   const [board, setBoard] = React.useState(tempBoardObNO2)
   const [isPlayed, setIsPlayed] = React.useState(false)
   const [speed, setSpeed] = React.useState(50)
+  const [rule, setRule] = React.useState(false)
   const requestRef = React.useRef(null)
   const keyRef = React.useRef(null)
   const keyChangeRef = React.useRef(null)
@@ -46,6 +47,7 @@ export default function App() {
   const howmanyRef = React.useRef(2)
   const boardRef = React.useRef(tempBoardObNO2)
   const foodRef = React.useRef(null)
+
 
 
   //##########################################################
@@ -258,7 +260,9 @@ export default function App() {
   }
 
 
-
+  function ruleHandle() {
+    setRule(perv => !perv)
+  }
 
 
 
@@ -336,13 +340,21 @@ export default function App() {
     <main>
 
       <div className="wrapper">
+        <div className="ruleBtn-wrapper">
+          <div className="ruleBtn1" onClick={ruleHandle}></div>
+          <div className="ruleBtn2" onClick={ruleHandle} ></div>
+          <div className="ruleBtn-facade"></div>
+          <div className="ruleBtn-facade-in" onClick={ruleHandle} style={!rule ? { right: "0" } : { left: "0" }}></div>
+        </div>
         <div className="input-box">
           <input type="range" id="speed" name="speed"
             min={5} max={160} value={speed}
             step={1} onChange={speedHandle} />
         </div>
-        <div id="speed-value">
-          Speed: {speed - 155 > 0 ? Math.ceil(((speed - 155) * 100) / 155) : Math.ceil((((speed - 155) * -1) * 100) / 155)}%
+        <div className="speed-wrapper">
+          <div id="speed-value">
+            Speed: {speed - 155 > 0 ? Math.ceil(((speed - 155) * 100) / 155) : Math.ceil((((speed - 155) * -1) * 100) / 155)}%
+          </div>
         </div>
       </div>
       <div className="score-box">
