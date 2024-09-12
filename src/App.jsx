@@ -45,6 +45,8 @@ export default function App() {
   const keyChangeRef = React.useRef(null)
   const snakeCountRef = React.useRef(0)
   const howmanyRef = React.useRef(2)
+  const howmanyPlus5Ref = React.useRef(0)
+  const howmanyScoreRef = React.useRef(0)
   const boardRef = React.useRef(tempBoardObNO2)
   const foodRef = React.useRef(null)
 
@@ -211,7 +213,17 @@ export default function App() {
       if (tempNow === foodRef.current) {
         console.log("food = tempNow")
         placeFood()
-        howmanyRef.current++
+        howmanyScoreRef.current++
+        if (howmanyRef.current > 10) {
+          howmanyPlus5Ref.current += 1 / 5
+          if (howmanyPlus5Ref.current === 1) {
+            howmanyRef.current++
+            howmanyPlus5Ref.current = 0
+          }
+        }
+        else {
+          howmanyRef.current++
+        }
         snakePaintRef()
       }
 
@@ -358,8 +370,8 @@ export default function App() {
         </div>
       </div>
       <div className="score-box">
-        <div className="score"><p>Score: {howmanyRef.current + 1}</p></div>
-        <div className="high-score"><p>High Score: {howmanyRef.current + 1}</p></div>
+        <div className="score"><p>Score: {howmanyScoreRef.current}</p></div>
+        <div className="high-score"><p>High Score: {howmanyScoreRef.current}</p></div>
       </div>
       <div className="game-box">
         {
